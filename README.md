@@ -1,6 +1,6 @@
 # 3D-Map-Generator
 A system for converting a 2D physical map into an interactive 3D digital elevation model.  
-This is the code accompanying the work published in the DJ Strike 2021 Conference Proceedings with ISBN: 978-93-5437-776-1
+This is the code accompanying the work published in the [DJ Strike 2021 Conference Proceedings](https://drive.google.com/file/d/1B51kWHIXxzPnldikBu8TaY4XW-epn7bi/preview) with ISBN: 978-93-5437-776-1
 
 Abstract:  
 3D modelling techniques for interacting with 3D objects that have up till now been constrained to only 2D representations, have become attractive with recent advances in computer vision. The scope of the presented work is the design and performance of a system to effectively visualize a 2D physical map by transforming it into an interactive 3D model.
