@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>3D Map Generator</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    html {
+      font-family: 'Lato', sans-serif;
+    }
+
+    body{
+      height: 100vh;
+      margin: 0;
+      text-align: center;
+    }
+
+    h1{
+      color: #094067;
+    }
+
+    form {
+      width: 600px;
+      background: #094067;
+      margin: 0 auto;
+      padding: 30px;
+      border: 1px solid black;
+      margin-bottom: 80px;
+    }
+
+    #form ol {
+      padding-left: 0;
+    }
+
+    #form li, div > p {
+      background: #90b4ce;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      list-style-type: none;
+      border: 1px solid black;
+    }
+
+    #form img {
+      height: 256px;
+      order: 1;
+    }
+
+    #form p {
+      line-height: 32px;
+      padding-left: 10px;
+      text-align: center;
+    }
+
+    #form label, #form button,a button, button {
+      background-color: #3da9fc;
+      padding: 10px 20px;
+      border-radius: 5px;
+      color: white;
+      border: 1px ridge #3da9fc;
+      font-size: 0.8rem;
+      height: auto;
+      font-weight: bold;
+    }
+
+    #form label:hover, #form button:hover ,a button:hover,#form label:active, #form button:active,a button:active,button:active,button:hover{
+      background-color: white;
+      color: #3da9fc;
+    }
+
+    .preview{
+      margin: 60px 0;
+    }
+
+    #form input{
+      opacity: 0;
+      display: none;
+      margin-bottom: 20px;
+    }
+
+    #var-form {
+      display: none;
+    }
+
+    #var-form label{
+      background-color: none;
+      color: white;
+      margin-top: 10px;
+    }
+
+    #var-form input{
+      display: inline-block;
+      opacity: 1;
+      margin-bottom: 10px;
+    }
+
+    .lds-roller {
+      display: inline-block;
+      position: relative;
+      width: 80px;
+      height: 80px;
+    }
+    .lds-roller div {
+      animation: lds-roller 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+      transform-origin: 40px 40px;
+    }
+    .lds-roller div:after {
+      content: " ";
+      display: block;
+      position: absolute;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: black;
+      margin: -4px 0 0 -4px;
+    }
+    .lds-roller div:nth-child(1) {
+      animation-delay: -0.036s;
+    }
+    .lds-roller div:nth-child(1):after {
+      top: 63px;
+      left: 63px;
+    }
+    .lds-roller div:nth-child(2) {
+      animation-delay: -0.072s;
+    }
+    .lds-roller div:nth-child(2):after {
+      top: 68px;
+      left: 56px;
+    }
+    .lds-roller div:nth-child(3) {
+      animation-delay: -0.108s;
+    }
+    .lds-roller div:nth-child(3):after {
+      top: 71px;
+      left: 48px;
+    }
+    .lds-roller div:nth-child(4) {
+      animation-delay: -0.144s;
+    }
+    .lds-roller div:nth-child(4):after {
+      top: 72px;
+      left: 40px;
+    }
+    .lds-roller div:nth-child(5) {
+      animation-delay: -0.18s;
+    }
+    .lds-roller div:nth-child(5):after {
+      top: 71px;
+      left: 32px;
+    }
+    .lds-roller div:nth-child(6) {
+      animation-delay: -0.216s;
+    }
+    .lds-roller div:nth-child(6):after {
+      top: 68px;
+      left: 24px;
+    }
+    .lds-roller div:nth-child(7) {
+      animation-delay: -0.252s;
+    }
+    .lds-roller div:nth-child(7):after {
+      top: 63px;
+      left: 17px;
+    }
+    .lds-roller div:nth-child(8) {
+      animation-delay: -0.288s;
+    }
+    .lds-roller div:nth-child(8):after {
+      top: 56px;
+      left: 12px;
+    }
+    @keyframes lds-roller {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+    #loading,#model{
+      text-align: center;
+    }
+
+  </style>
+</head>
+<body>
+  <h1>3D Map Generator</h1>
+  <form>
+    <div id="form">
+      <div>
+        <label for="image_uploads">Choose image to upload (PNG, JPG)</label>
+        <input type="file" id="image_uploads" name="image_uploads" accept=".jpg, .jpeg, .png, .gif">
+      </div>
+      <div class="preview">
+        <p>No files currently selected for upload</p>
+      </div>
+    </div>
+    
+  
+    <div id="var-form">
+      <div>
+        <label for="clusters">Clusters:-</label>
+        <input type="text" id="clusters" name="clusters">
+      </div>
+      <div>
+        <label for="radial_blur">Radial Blur:- </label>
+        <input type="text" id="radial_blur" name="radial_blur">
+      </div>
+      <div>
+        <label for="grass">Grass:-</label>
+        <input type="text" id="grass" name="grass">
+      </div>
+    </div>
+    <div>
+      <button type="button" id="Submit">Submit</button>
+    </div>
+  </form>
+
+  <div id="loading">
+    <h3>3d Model is being generated...</h3>
+    <div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+  </div>
+  <div id="model">
+    <a href="index.html"><button>View the Model</button></a>
+  </div>
+  <script>
+    
+    const submit = document.getElementById("Submit");
+    const form = document.getElementById("form");
+    const loading = document.getElementById("loading");
+    const model = document.getElementById("model");
+    loading.style.display = 'none';
+    model.style.display = 'none';
+
+
+    form.addEventListener('submit',(e)=>{
+      console.log(e);
+      e.preventDefault();
+    })
+
+    submit.addEventListener('click', async (e)=>{
+      e.preventDefault();
+      const fileInput = document.getElementById('image_uploads') ;
+      const clusters = document.getElementById('clusters').value ;
+      const radial_blur = document.getElementById('radial_blur').value ;
+      const grass = document.getElementById('grass').value ;
+
+      const formData = new FormData();
+
+      formData.append('image', fileInput.files[0]);
+
+      if (clusters !== "") {
+        console.log("clusters");
+        formData.append('clusters', clusters);
+      }
+
+      if (radial_blur !== "") {
+        console.log("radial_blur");
+        formData.append('radial_blur', radial_blur);
+      }
+
+      if (grass !== "") {
+        console.log("grass");
+        formData.append('grass', grass);
+      }
+
+      const options = {
+        method: 'POST',
+        body: formData,
+      };
+      
+      loading.style.display = 'block';
+
+      const response = await fetch('http://localhost:8000/api/process/', options);
+      const data = await response.json();
+      loading.style.display = 'none';
+      model.style.display = 'block';
+      console.log(data);
+
+    })
+
+    const input = document.querySelector('input');
+    const preview = document.querySelector('.preview');
+
+    input.style.opacity = 0;
+
+    input.addEventListener('change', updateImageDisplay);
+
+    function updateImageDisplay() {
+      while(preview.firstChild) {
+        preview.removeChild(preview.firstChild);
+      }
+
+      const curFiles = input.files;
+      if(curFiles.length === 0) {
+        /* const para = document.createElement('p');
+        para.textContent = 'No files currently selected for upload';
+        preview.appendChild(para); */
+      } else {
+        const list = document.createElement('ol');
+        preview.appendChild(list);
+
+        for(const file of curFiles) {
+          const listItem = document.createElement('li');
+          const para = document.createElement('p');
+
+          if(validFileType(file)) {
+            para.textContent = `File name ${file.name}, file size ${returnFileSize(file.size)}.`;
+            const image = document.createElement('img');
+            image.src = URL.createObjectURL(file);
+
+            listItem.appendChild(image);
+            //listItem.appendChild(para);
+          } else {
+            para.textContent = `File name ${file.name}: Not a valid file type. Update your selection.`;
+            //listItem.appendChild(para);
+          }
+
+          list.appendChild(listItem);
+        }
+      }
+    }
+
+    function validFileType(file) {
+      const fileTypes = [
+        'image/apng',
+        'image/bmp',
+        'image/gif',
+        'image/jpeg',
+        'image/pjpeg',
+        'image/png',
+        'image/svg+xml',
+        'image/tiff',
+        'image/webp',
+        `image/x-icon`
+    ];
+      return fileTypes.includes(file.type);
+    }
+
+    function returnFileSize(number) {
+      if(number < 1024) {
+        return number + 'bytes';
+      } else if(number > 1024 && number < 1048576) {
+        return (number/1024).toFixed(1) + 'KB';
+      } else if(number > 1048576) {
+        return (number/1048576).toFixed(1) + 'MB';
+      }
+    }
+  </script>
+</body>
+</html>

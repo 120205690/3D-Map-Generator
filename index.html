@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+   <head>
+       <title>3d model</title>
+       <link rel="preconnect" href="https://fonts.gstatic.com">
+       <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+       <style>
+           body { 
+               margin: 0; 
+               font-family: 'Lato', sans-serif;
+            }
+           #back{
+               position: fixed;
+               top: 5%;
+               left: 2%;
+           }
+           a button {
+            background-color: #3da9fc;
+            padding: 5px 10px;
+            border-radius: 5px;
+            border: 1px ridge 3da9fc;
+            color: white;
+            font-size: 0.8rem;
+            height: auto;
+            }
+
+            a button:hover ,button:hover,a button:active,button:active{
+            background-color: white;
+            color: #3da9fc;
+            }
+       </style>
+   </head>
+   <body>
+       <script type="module">
+     import * as THREE from 'https://unpkg.com/three@0.123.0/build/three.module.js';
+     import { OrbitControls } from 'https://unpkg.com/three@0.123.0/examples/jsm/controls/OrbitControls.js';
+ 
+     const IMAGE_SRC = './Backend/final.jpg';
+     const SIZE_AMPLIFIER = 5;
+     const HEIGHT_AMPLIFIER = 3;
+ 
+     var WIDTH;
+     var HEIGHT;
+ 
+     var scene, camera, renderer, controls;
+     var data, plane;
+ 
+     image();
+ 
+     function image() {
+         var image = new Image();
+         image.src = IMAGE_SRC;
+         image.onload = function() {
+             WIDTH = image.width;
+             HEIGHT = image.height;
+ 
+             var canvas = document.createElement('canvas');
+             canvas.width = WIDTH;
+             canvas.height = HEIGHT;
+             var context = canvas.getContext('2d');
+ 
+             context.drawImage(image, 0, 0);
+             data = context.getImageData(0, 0, WIDTH, HEIGHT).data;
+             console.log(data,WIDTH,HEIGHT);
+ 
+             init();
+         }
+     }
+ 
+     function init() {
+ 
+         // initialize camera
+         camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, .1, 100000);
+         camera.position.set(0, 1000, 0);
+ 
+         // initialize scene
+         scene = new THREE.Scene();
+ 
+         // initialize directional light (sun)
+         var sun = new THREE.DirectionalLight(0xFFFFFF, 1.0);
+         sun.position.set(300, 400, 300);
+         sun.distance = 1000;
+         scene.add(sun);
+ 
+         var frame = new THREE.SpotLightHelper(sun);
+         scene.add(frame);
+ 
+         // initialize renderer
+         renderer = new THREE.WebGLRenderer();
+         renderer.setClearColor(0x000000);
+         renderer.setPixelRatio(window.devicePixelRatio);
+         renderer.setSize(window.innerWidth, window.innerHeight);
+         document.body.appendChild( renderer.domElement );
+ 
+         // initialize controls
+         controls = new OrbitControls(camera, renderer.domElement);
+         controls.enableDamping = true;
+         controls.dampingFactor = .05;
+         controls.rotateSpeed = .1;
+ 
+         // initialize plane
+         plane = new THREE.PlaneBufferGeometry(WIDTH * SIZE_AMPLIFIER, HEIGHT * SIZE_AMPLIFIER, WIDTH - 1, HEIGHT - 1);
+         plane.castShadow = true;
+         plane.receiveShadow = true;
+ 
+         var vertices = plane.attributes.position.array;
+         // apply heightmap to vertices of plane
+         for(let i=0, j=2; i < data.length; i += 4, j += 3) {
+             vertices[j] = data[i] * HEIGHT_AMPLIFIER;
+         }
+ 
+         var material = new THREE.MeshPhongMaterial({color: 0xFFFFFF, side: THREE.DoubleSide, shading: THREE.FlatShading});
+ 
+         var mesh = new THREE.Mesh(plane, material);
+         mesh.rotation.x = - Math.PI / 2;
+         mesh.matrixAutoUpdate  = false;
+         mesh.updateMatrix();
+ 
+         plane.computeFaceNormals();
+         plane.computeVertexNormals();
+ 
+         scene.add(mesh);
+ 
+         animate();
+     }
+ 
+     function animate() {
+         requestAnimationFrame(animate);
+ 
+         renderer.render(scene, camera);
+         controls.update();
+     }
+ 
+ 
+       </script>
+       <a id="back" href="home.html"><button>Back to Home page</button></a>
+   </body>
+</html>
